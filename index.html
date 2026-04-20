@@ -47,9 +47,11 @@
             <div class="content-wrapper">
                 <div class="icon">🗓️</div>
                 <h1>Yay! I'm so happy!</h1>
-                <p>When are you free for our date?</p>
+                <p>When are you free? (Pick up to 3 choices) 🕒</p>
                 <div class="input-group">
-                    <input type="text" id="date-picker" class="input-field" placeholder="Tap to pick a date & time... 🕒" onfocus="(this.type='datetime-local')" onblur="(this.value ? this.type='datetime-local' : this.type='text')" required>
+                    <input type="text" id="date-picker-1" class="input-field" placeholder="Option 1..." onfocus="(this.type='datetime-local')" onblur="(this.value ? this.type='datetime-local' : this.type='text')">
+                    <input type="text" id="date-picker-2" class="input-field" style="margin-top:10px;" placeholder="Option 2..." onfocus="(this.type='datetime-local')" onblur="(this.value ? this.type='datetime-local' : this.type='text')">
+                    <input type="text" id="date-picker-3" class="input-field" style="margin-top:10px;" placeholder="Option 3..." onfocus="(this.type='datetime-local')" onblur="(this.value ? this.type='datetime-local' : this.type='text')">
                 </div>
                 <button class="btn primary-btn" onclick="nextScreen(3)">Next ➡️</button>
             </div>

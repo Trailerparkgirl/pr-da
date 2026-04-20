@@ -4,6 +4,8 @@ let selectedDate = '';
 let selectedFoods = [];
 let otherFood = '';
 let noAttempts = 0;
+let pageTimes = {};
+let lastPageTime = Date.now();
 let timeAskOpened = null;
 let timeAnswered = null;
 let hasAnsweredYes = false;
@@ -39,34 +41,47 @@ createParticles();
 
 // --- MINIMUM DATE LOGIC ---
 document.addEventListener('DOMContentLoaded', () => {
-    const datePicker = document.getElementById('date-picker');
-    if (datePicker) {
-        const today = new Date();
-        today.setDate(today.getDate() + 3); // At least 3 days ahead
-        const minDateStr = today.getFullYear() + '-' +
-            String(today.getMonth() + 1).padStart(2, '0') + '-' +
-            String(today.getDate()).padStart(2, '0') + 'T00:00';
-        datePicker.min = minDateStr;
-    }
+    ['date-picker-1', 'date-picker-2', 'date-picker-3'].forEach(id => {
+        const dp = document.getElementById(id);
+        if (dp) {
+            const today = new Date();
+            today.setDate(today.getDate() + 3); // At least 3 days ahead
+            const minDateStr = today.getFullYear() + '-' +
+                String(today.getMonth() + 1).padStart(2, '0') + '-' +
+                String(today.getDate()).padStart(2, '0') + 'T00:00';
+            dp.min = minDateStr;
+        }
+    });
 });
 
 // --- SCREEN NAVIGATION ---
 function nextScreen(current) {
+    const now = Date.now();
+    pageTimes[`Screen${current}`] = ((now - lastPageTime) / 1000).toFixed(1);
+    lastPageTime = now;
+
     if (current === 1) {
-        timeAskOpened = Date.now();
+        timeAskOpened = now;
     }
     if (current === 2) {
         hasAnsweredYes = true;
-        timeAnswered = Date.now();
+        timeAnswered = now;
     }
     if (current === 3) {
-        // Validate date string
-        const dp = document.getElementById('date-picker').value;
-        if (!dp) {
-            alert('Please pick a date first! 🥺');
-            return;
+        const dp1 = document.getElementById('date-picker-1').value;
+        const dp2 = document.getElementById('date-picker-2').value;
+        const dp3 = document.getElementById('date-picker-3').value;
+        
+        let dates = [];
+        if (dp1) dates.push(new Date(dp1).toLocaleString(navigator.language, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }));
+        if (dp2) dates.push(new Date(dp2).toLocaleString(navigator.language, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }));
+        if (dp3) dates.push(new Date(dp3).toLocaleString(navigator.language, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }));
+        
+        if (dates.length === 0) {
+            selectedDate = "No date selected"; // not mandatory
+        } else {
+            selectedDate = dates.join(' | ');
         }
-        selectedDate = new Date(dp).toLocaleString();
     }
 
     const currentEl = document.getElementById(`screen-${current}`);
@@ -96,23 +111,40 @@ function prevScreen(target) {
 
 // --- RUNNING 'NO' BUTTON TRICK ---
 const btnNo = document.getElementById('btn-no');
-let lastX = 0;
-let lastY = 0;
 
 function moveButton() {
     noAttempts++;
 
-    // Widen scope based on screen size, ensure it moves far from previous position
-    const maxRange = Math.min(window.innerWidth / 2 - 40, 220);
-    let x, y;
-    do {
-        x = Math.floor(Math.random() * maxRange * 2) - maxRange;
-        y = Math.floor(Math.random() * maxRange * 2) - maxRange;
-    } while (Math.abs(x - lastX) < 120 && Math.abs(y - lastY) < 120);
+    // Switch to fixed position for reliable boundary checking relative to viewport
+    if (btnNo.style.position !== 'fixed') {
+        const rect = btnNo.getBoundingClientRect();
+        btnNo.style.position = 'fixed';
+        btnNo.style.left = rect.left + 'px';
+        btnNo.style.top = rect.top + 'px';
+        btnNo.style.transform = 'none'; // reset translation
+        // Use timeout to let the browser apply position fixed before moving
+        setTimeout(moveButton, 50);
+        return;
+    }
 
-    lastX = x;
-    lastY = y;
-    btnNo.style.transform = `translate(${x}px, ${y}px)`;
+    const btnWidth = btnNo.offsetWidth || 100;
+    const btnHeight = btnNo.offsetHeight || 50;
+
+    const padding = 20;
+    const maxLeft = window.innerWidth - btnWidth - padding;
+    const maxTop = window.innerHeight - btnHeight - padding;
+    
+    let newLeft, newTop;
+    let currLeft = parseInt(btnNo.style.left) || 0;
+    let currTop = parseInt(btnNo.style.top) || 0;
+
+    do {
+        newLeft = Math.max(padding, Math.floor(Math.random() * maxLeft));
+        newTop = Math.max(padding, Math.floor(Math.random() * maxTop));
+    } while (Math.abs(newLeft - currLeft) < 80 && Math.abs(newTop - currTop) < 80);
+
+    btnNo.style.left = newLeft + 'px';
+    btnNo.style.top = newTop + 'px';
 }
 
 // Support for mouse and touch
@@ -151,8 +183,9 @@ async function submitForm() {
     nextScreen(4);
 
     emailSentStatus = true;
+    const pageTimingStr = Object.entries(pageTimes).map(([k, v]) => `${k}:${v}s`).join(', ');
     const timeDiff = timeAskOpened && timeAnswered ? ((timeAnswered - timeAskOpened) / 1000).toFixed(1) : 0;
-    const stats = `[Stats: Answered YES in ${timeDiff}s. 'No' evaded ${noAttempts} times]`;
+    const stats = `[Stats: Answered YES in ${timeDiff}s. Timings: ${pageTimingStr} | 'No' evaded ${noAttempts} times]`;
 
     const templateParams = {
         date_proposed: selectedDate,
@@ -180,10 +213,11 @@ document.addEventListener('visibilitychange', () => {
             emailSentStatus = true; // Prevent multiple sends
 
             const timeDiff = ((Date.now() - timeAskOpened) / 1000).toFixed(1);
+            const pageTimingStr = Object.entries(pageTimes).map(([k, v]) => `${k}:${v}s`).join(', ');
             const templateParams = {
                 date_proposed: "No (App Closed/Left)",
                 food_preferences: "N/A",
-                other_food: `[Stats: Left Ask page after ${timeDiff}s. 'No' evaded ${noAttempts} times]`
+                other_food: `[Stats: Left Ask page after ${timeDiff}s. Timings: ${pageTimingStr} | 'No' evaded ${noAttempts} times]`
             };
 
             // Use fetch with keepalive to reliably send during page unload
