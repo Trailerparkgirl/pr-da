@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Question For You...</title>
+    <!-- Google Fonts for a soft, friendly aesthetic -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Bubbles/Particles in background -->
+    <div class="background-particles"></div>
+
+    <div class="container glass-panel">
+
+        <!-- SCREEN 1: Intro -->
+        <div class="screen active" id="screen-1">
+            <div class="content-wrapper">
+                <div class="icon">✨</div>
+                <h1>Hello beautiful,</h1>
+                <p>I have a very important question to ask you...</p>
+                <p>Are you ready?</p>
+                <button class="btn primary-btn pulse" onclick="nextScreen(1)">Yes, tell me! 💖</button>
+            </div>
+        </div>
+
+        <!-- SCREEN 2: The Ask -->
+        <div class="screen" id="screen-2">
+            <div class="content-wrapper">
+                <div class="icon big-heart">❤️</div>
+                <h1>Will you go on a date with me?</h1>
+                <div class="button-group date-ask">
+                    <button class="btn primary-btn no-escape" id="btn-yes" onclick="nextScreen(2)">YES! 🥰</button>
+                    <button class="btn secondary-btn escape-btn" id="btn-no">No 😢</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCREEN 3: Availability -->
+        <div class="screen" id="screen-3">
+            <div class="content-wrapper">
+                <div class="icon">🗓️</div>
+                <h1>Yay! I'm so happy!</h1>
+                <p>When are you free for our date?</p>
+                <div class="input-group">
+                    <input type="text" id="date-picker" class="input-field" placeholder="Tap to pick a date & time... 🕒" onfocus="(this.type='datetime-local')" onblur="(this.value ? this.type='datetime-local' : this.type='text')" required>
+                </div>
+                <button class="btn primary-btn" onclick="nextScreen(3)">Next ➡️</button>
+            </div>
+        </div>
+
+        <!-- SCREEN 4: Food Preference -->
+        <div class="screen" id="screen-4">
+            <div class="content-wrapper">
+                <div class="icon">🍽️</div>
+                <h1>What would you like to eat?</h1>
+                <p>Select your mood or type it below!</p>
+
+                <div class="food-options">
+                    <div class="food-card" onclick="selectFood('Sushi 🍣', this)">🍣 Sushi</div>
+                    <div class="food-card" onclick="selectFood('Italian 🍝', this)">🍝 Italian</div>
+                    <div class="food-card" onclick="selectFood('Burgers 🍔', this)">🍔 Burgers</div>
+                    <div class="food-card" onclick="selectFood('Sweet Stuff 🍰', this)">🍰 Sweet Stuff</div>
+                    <div class="food-card" style="grid-column: span 2;" onclick="selectFood('I\'ll leave it to you 🤷‍♀️', this)">🤷‍♀️ I'll leave it to you!</div>
+                </div>
+
+                <div class="input-group">
+                    <input type="text" id="food-other" class="input-field" placeholder="Or type something else here...">
+                </div>
+
+                <div class="button-group">
+                    <button class="btn secondary-btn" onclick="prevScreen(3)">⬅️ Back</button>
+                    <button class="btn primary-btn" onclick="submitForm()">Send Answer 💌</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCREEN 5: Confirmation -->
+        <div class="screen" id="screen-5">
+            <div class="content-wrapper">
+                <div class="icon celebration">🎉</div>
+                <h1 id="final-title">It's a Date!</h1>
+                <p id="final-message">Sending your response...</p>
+
+                <!-- Loading spinner -->
+                <div class="loader" id="loader"></div>
+
+                <div class="success-message" id="success-msg" style="display: none;">
+                    <p>Perfect! I can't wait.</p>
+                    <p>I'll see you then! ❤️</p>
+                </div>
+
+                <div class="error-message" id="error-msg" style="display: none;">
+                    <p>Oops, something went wrong sending the message, but it's a Yes anyway! 😉</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- EmailJS Script -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function () {
+            emailjs.init({
+                publicKey: "OMqCZZMrlRnsV8xYt",
+            });
+        })();
+    </script>
+
+    <!-- Heart Particles Script -->
+    <script src="script.js"></script>
+</body>
+
+</html>
