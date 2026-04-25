@@ -23,17 +23,39 @@
         <div class="screen active" id="screen-1">
             <div class="content-wrapper">
                 <div class="icon">✨</div>
-                <h1>Hello beautiful,</h1>
-                <p>I have a very important question to ask you...</p>
-                <p>Are you ready?</p>
-                <button class="btn primary-btn pulse" onclick="nextScreen(1)">Yes, tell me! 💖</button>
+                <h1>Hi there,</h1>
+                <p>App-руу орж ирсэнд баярлалаа. ...</p>
+                <button class="btn primary-btn pulse" onclick="nextScreen(1)">next</button>
+            </div>
+        </div>
+
+        <!-- SCREEN 1-A: Foreword Page 1 (✏️ fill in your own text below!) -->
+        <div class="screen" id="screen-1a">
+            <div class="content-wrapper tight-copy">
+                <!-- <div class="icon">🌸</div> -->
+                <p>random хүн ингэж асуухаар awkward </p>
+                <p>бас аймаар байж магадгүй л дээ... </p>
+                <!-- ✏️ End -->
+                <button class="btn primary-btn" onclick="nextScreen('1a')">Next ➡️</button>
+            </div>
+            <div>
+                
+            </div>
+        </div>
+
+        <!-- SCREEN 1-B: Foreword Page 2 (✏️ fill in your own text below!) -->
+        <div class="screen" id="screen-1b">
+            <div class="content-wrapper tight-copy">
+                <p>тхдээ чатаар асууснаас л дээр байх </p>
+                <p>гэж бодоод энүүгээр асуухаар шийдээд...</p>
+                <button class="btn primary-btn" onclick="nextScreen('1b')">Next ➡️</button>
             </div>
         </div>
 
         <!-- SCREEN 2: The Ask -->
         <div class="screen" id="screen-2">
             <div class="content-wrapper">
-                <div class="icon big-heart">❤️</div>
+                <div class="icon">🌷</div>
                 <h1>Will you go on a date with me?</h1>
                 <div class="button-group date-ask">
                     <button class="btn primary-btn no-escape" id="btn-yes" onclick="nextScreen(2)">YES! 🥰</button>

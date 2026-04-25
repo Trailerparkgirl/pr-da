@@ -19,15 +19,22 @@
     padding: 0;
 }
 
+html {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
 body {
     font-family: 'Outfit', sans-serif;
     background: linear-gradient(135deg, var(--bg-gradient-1), var(--bg-gradient-2), var(--bg-gradient-3));
     background-size: 400% 400%;
     animation: gradientBG 15s ease infinite;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    width: 100%;
+    height: 100vh;
+    height: 100svh;
+    display: grid;
+    place-items: center;
     color: var(--text-dark);
     overflow: hidden;
     position: relative;
@@ -71,7 +78,8 @@ body {
     z-index: 10;
     width: 90%;
     max-width: 500px;
-    height: 85dvh;
+    height: min(85vh, 650px);
+    height: min(85svh, 650px);
     max-height: 650px;
     border-radius: 24px;
     display: flex;
@@ -98,6 +106,8 @@ body {
     opacity: 0;
     transform: translateX(100%);
     position: absolute; /* Stack them */
+    inset: 0;
+    overflow-y: auto; /* allow scroll for tall content like food grid */
 }
 
 .screen::-webkit-scrollbar {
@@ -111,8 +121,7 @@ body {
 .screen.active {
     opacity: 1;
     transform: translateX(0);
-    position: relative; /* Prevent absolute overlap collapse */
-    overflow-y: auto; /* allow scroll for tall content like food grid */
+    position: absolute;
 }
 
 /* Past screens move left */
@@ -125,12 +134,28 @@ body {
     text-align: center;
     padding: 40px;
     width: 100%;
+    min-height: 100%;
     display: flex;
     flex-direction: column;
     gap: 20px;
     align-items: center;
+    justify-content: center;
     margin: auto; /* nicely centers vertically when height is more than needed */
 }
+
+.tight-copy {
+    gap: 8px;
+    transform: translateY(34px);
+}
+
+.tight-copy p {
+    margin-bottom: 0;
+}
+
+.tight-copy .btn {
+    margin-top: 44px;
+}
+
 
 .icon {
     font-size: 4rem;
@@ -179,9 +204,27 @@ p {
 /* Escape trick container */
 .date-ask {
     position: relative;
-    height: 60px; /* give some room */
+    display: block;
+    width: min(100%, 360px);
+    height: 170px;
+    margin: 14px auto 0;
+    overflow: hidden;
 }
 
+.date-ask #btn-yes,
+.date-ask #btn-no {
+    position: absolute;
+    top: 8px;
+    white-space: nowrap;
+}
+
+.date-ask #btn-yes {
+    left: calc(50% - 125px);
+}
+
+.date-ask #btn-no {
+    left: calc(50% + 18px);
+}
 .btn {
     padding: 12px 28px;
     border: none;
@@ -225,7 +268,6 @@ p {
 }
 
 .escape-btn {
-    position: relative; 
     z-index: 20;
 }
 
@@ -291,6 +333,10 @@ p {
     border-radius: 50%;
     animation: spin 1s linear infinite;
     margin: 20px auto;
+}
+
+#btn-no {
+    max-width: calc(100% - 20px);
 }
 
 @keyframes spin {
